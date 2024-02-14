@@ -20,7 +20,7 @@ const ThemeComponent = props => {
   const { settings, children } = props
 
   // ** Pass merged ThemeOptions (of core and user) to createTheme function
-  let theme = createTheme(themeOptions(settings, 'light'))
+  let theme = createTheme(themeOptions(settings, 'dark'))
 
   // ** Set responsive font sizes to true
   if (themeConfig.responsiveFontSizes) {
