@@ -4,6 +4,7 @@ import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { useAuth } from 'src/hooks/useAuth'
+import { useRouter } from 'next/router'
 
 // Styled component for Blank Layout component
 const BlankLayoutWrapper = styled(Box)(({ theme }) => ({
@@ -35,6 +36,7 @@ const LinkStyled = styled(Link)(({ theme }) => ({
 
 const HomeLayout = ({ children }) => {
   const auth = useAuth();
+  const router = useRouter();
 
   return (
     <BlankLayoutWrapper className='layout-wrapper'>
@@ -61,7 +63,12 @@ const HomeLayout = ({ children }) => {
                 </>
                 :
                 <>
+                  {
+                    router.asPath != '/home' &&
+                    <LinkStyled sx={{ ml: 3 }} href="/home" >Home</LinkStyled>
+                  }
                   <LinkStyled sx={{ ml: 3 }} href="/auction/create" >Create Auction</LinkStyled>
+                  <LinkStyled sx={{ ml: 3 }} href="/profile" >Profile</LinkStyled>
                   <LinkStyled sx={{ ml: 3 }} href="#" onClick={auth.logout}>Sign out</LinkStyled>
                 </>
             }

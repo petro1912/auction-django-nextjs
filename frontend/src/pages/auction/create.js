@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Container from '@mui/material/Container'
 import Box from '@mui/material/Box';
@@ -15,6 +15,7 @@ import DatePickerWrapper from "src/@core/styles/libs/react-datepicker";
 import { useRouter } from "next/router";
 
 import { makeStyles } from '@mui/styles'
+import { useAuth } from "src/hooks/useAuth";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -25,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const AuctionCreate = () => {
+  const auth = useAuth();
   const [actItems, setActItems] = useState([]);
   const router = useRouter();
   const classes = useStyles();
@@ -33,6 +35,12 @@ const AuctionCreate = () => {
     started: new Date(),
     ended: new Date(),
   });
+
+  useEffect(() => {
+    if (!auth.user) {
+      router.back();
+    }
+  }, [])
 
   const saveAuction = () => {
     const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)

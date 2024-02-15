@@ -1,6 +1,8 @@
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import HomeLayout from 'src/@core/layouts/HomeLayout'
 
-export default function Home() {
+const Home = () => {
   // Use useRouter to access the router object
   const router = useRouter();
   useEffect(() => {
@@ -11,3 +13,7 @@ export default function Home() {
   return null;
 }
 
+Home.getLayout = page => <HomeLayout>{page}</HomeLayout>
+Home.guestGuard = true
+
+export default Home

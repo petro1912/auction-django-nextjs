@@ -6,6 +6,7 @@ import os
 import json
 import uuid
 from django.conf import settings
+from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, renderer_classes
@@ -37,6 +38,13 @@ def auction_list(request):
 @renderer_classes((JSONRenderer,))
 def auction_detail(request, id):
     item = AuctionItem.objects.get(pk = id)
+    now = timezone.now()
+    if item.started_at < now and item.status == AuctionStatus.NEW:
+        if item.ended_at > now:
+            item.status = AuctionStatus.LIVE
+        else:
+            item.status = AuctionStatus.EXPIRED
+        item.save()
     serializer = AuctionItemSerializer(item, many=False)
 
     return Response({"status": "success", "data": serializer.data})
@@ -69,7 +77,7 @@ def upload_images(request):
     for key, file in files.lists():
         file = files[key]
         file_index = key.split("[")[1].split("]")[0]
-        object_index, file_index_in_object = map(int, file_index.split('_'))  
+        object_index, file_index_in_object = map(int, file_index.split('_'))
         
         extension = file.name.split('.')[-1]
         file_name = f'auction-{uuid.uuid4()}.{extension}'  

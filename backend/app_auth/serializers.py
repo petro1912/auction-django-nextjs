@@ -7,7 +7,7 @@ from app_auth.models import Account
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
-        fields = ['id', 'email', 'fullname', 'image', 'password']
+        fields = ['id', 'email', 'fullname', 'image', 'password', 'date_joined']
         extra_kwargs={
             'password': {'write_only':True},
         }
