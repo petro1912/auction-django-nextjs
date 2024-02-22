@@ -3,6 +3,13 @@ from django.db import models
 from app_auth.models import Account
 
 # Create your models here.
+class AuctionStatus:
+    NEW = 0
+    LIVE = 1
+    LIVE_RESERVE_MET = 2
+    SOLD = 3
+    EXPIRED = 4
+    RESERVE_NOT_MET = 5
 
 class AuctionItem(models.Model):
     seller = models.ForeignKey(Account, on_delete=models.CASCADE)

@@ -5,7 +5,7 @@ from app_auth.serializers import UserSerializer
 from app_auth.models import Account
 
 class AuctionBidSerializer(serializers.ModelSerializer):
-    # buyer = serializers.SerializerMethodField()
+    buyer = UserSerializer()
     # item = serializers
     class Meta:
         model = AuctionBid

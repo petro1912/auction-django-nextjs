@@ -22,6 +22,7 @@ import CustomChip from 'src/@core/components/mui/chip'
 import AuctionBids from 'src/views/pages/home/AuctionBids'
 import HomeLayout from 'src/@core/layouts/HomeLayout'
 
+// import WebSocket from 'websocket';
 import authConfig from 'src/configs/auth'
 import { makeStyles } from '@mui/styles'
 
@@ -48,9 +49,9 @@ const AuctionDetail = () => {
 
   const { id } = router.query;
   const classes = useStyles();
-
-  useEffect(() => {
-
+  
+  const getAuctionInfo = () => {
+    console.log("here");
     axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auction/detail/${id}`)
       .then((response) => {
         const res = response.data;
@@ -58,7 +59,32 @@ const AuctionDetail = () => {
           setData(res.data);
         }
       });
-  }, [])
+  }
+
+  useEffect(() => {
+
+    // const socket = new WebSocket(`${process.env.NEXT_PUBLIC_SOCKET_URL}/ws/chat`);
+    // socket.addEventListener("open", event => {
+    //     console.log('WebSocket connected');
+    //     socket.send(JSON.stringify({ 'room_id': `auction_${id}` }));
+    // });
+
+    // socket.addEventListener("message", event => {
+    //     console.log('Message received from server:', JSON.parse(event.data));
+    // });
+    
+    // return () => {
+    //     socket.close();
+    // };
+    getAuctionInfo();
+
+    const refreshInfo = setInterval(() => getAuctionInfo(), 30000);
+    
+    return () => {
+      clearInterval(refreshInfo);
+    };
+    
+  }, [])  
 
   const action = (price) => {
     const storedToken = window.localStorage.getItem(authConfig.storageTokenKeyName)
@@ -72,7 +98,8 @@ const AuctionDetail = () => {
       }).then((res) => {
         const { status, message, data } = res.data;
         if (status == "success" && data) {
-          router.reload();
+          // router.reload();
+          getAuctionInfo();
         } else {
           toast.error(message)
         }

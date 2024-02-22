@@ -14,17 +14,10 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework import status
 from rest_framework.decorators import parser_classes
 from rest_framework.parsers import MultiPartParser, FormParser
-from .models import AuctionItem, AuctionBid
+from .models import AuctionItem, AuctionBid, AuctionStatus
 from .serializers import AuctionItemSerializer, AuctionBidSerializer
 # Create your views here.
 
-class AuctionStatus:
-    NEW = 0
-    LIVE = 1
-    LIVE_RESERVE_MET = 2
-    SOLD = 3
-    EXPIRED = 4
-    RESERVE_NOT_MET = 5
     
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
@@ -55,7 +48,7 @@ def decode_items(form_data, seller):
         if key.startswith('items'):
             print('value', value[0])
             item_data = json.loads(value[0])
-            print('itemData', item_data)
+            print('itemData', item_data)  
             item = AuctionItem(
                 seller=seller,
                 description=item_data['description'],
@@ -139,8 +132,6 @@ def auction_create_bid_view(request, id):
     data['buyer'] = current_user.id
     data['item'] = id
     data['is_highest'] = True
-
-    print('data', data)
     
     if (
         auction_status != AuctionStatus.LIVE and 
@@ -154,7 +145,7 @@ def auction_create_bid_view(request, id):
     serializer = AuctionBidSerializer(data=data)
     high_bid = None
     try:
-        high_bid = AuctionBid.objects.get(item_id=id, is_highest=True)
+        high_bid = AuctionBid.objects.filter(item_id=id, is_highest=True)[:1].get()
     except AuctionBid.DoesNotExist:
         print("No high bid found for item_id:", id)
 
@@ -179,16 +170,15 @@ def auction_create_bid_view(request, id):
     if not serializer.is_valid():
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+    AuctionBid.objects.filter(item_id=id, is_highest=True).update(is_highest = False)
     serializer.save()
+    
 
     if bid_price >= item.reserve_price:
-        item.status = AuctionStatus.LVE_RESERVE_MET
+        item.status = AuctionStatus.LIVE_RESERVE_MET
     
     item.highest_price = bid_price
     item.save()
 
-    if high_bid is not None:
-        high_bid.is_highest = False
-        high_bid.save()
 
     return Response({"status": "success",  "data": serializer.data})
