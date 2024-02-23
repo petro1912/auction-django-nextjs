@@ -15,6 +15,7 @@ def auction_task():
         for item in auction_items:
             started = item.started_at
             ended = item.ended_at
+
             if now >= ended:
                 count = item.bid_count
                 # not yet completed

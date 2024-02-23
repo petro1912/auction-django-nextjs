@@ -1,3 +1,4 @@
+
 // ** MUI Imports
 import { useEffect, useState } from 'react';
 
@@ -32,7 +33,7 @@ const AuctionInfo = ({ period, updatePeriod }) => {
               showTimeSelect
               selected={time.started}
               id='started'
-              dateFormat='MM/dd/yyyy h:mm'
+              dateFormat='MM/dd/yyyy hh:mm aa'
               popperPlacement='bottom-start'
               onChange={date => updatePeriod(true, date)}
               customInput={<CustomInput label='Started at' />}
@@ -43,7 +44,7 @@ const AuctionInfo = ({ period, updatePeriod }) => {
               showTimeSelect
               selected={time.ended}
               id='ended'
-              dateFormat='MM/dd/yyyy h:mm'
+              dateFormat='MM/dd/yyyy hh:mm aa'
               popperPlacement='bottom-start'
               onChange={date => updatePeriod(false, date)}
               customInput={<CustomInput label='Ended at' />}

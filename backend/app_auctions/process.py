@@ -1,11 +1,12 @@
 import os
 import django
 import threading
-from app_auctions.tasks import auction_task
 
 # Configure Django settings
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "your_project.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "main.settings")
 django.setup()
+
+from app_auctions.tasks import auction_task
 
 def schedule_periodic_task(interval_seconds, task_func):
     def run_periodic_task():

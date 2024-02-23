@@ -18,6 +18,18 @@ class AuctionBidSerializer(serializers.ModelSerializer):
             'created_at'
         ]
 
+class AuctionBidCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AuctionBid
+        fields = [
+            'id', 
+            'buyer', 
+            'price',
+            'item',
+            'is_highest', 
+            'created_at'
+        ]
+
 class AuctionItemSerializer(serializers.ModelSerializer):
     auctionbids =  AuctionBidSerializer(many=True, read_only=True)
     images = serializers.ListField(child=serializers.CharField(), read_only=True)

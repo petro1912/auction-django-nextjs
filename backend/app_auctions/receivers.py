@@ -26,6 +26,9 @@ def send_email_for_seller(sender, instance, created, **kwargs):
 
         status = instance.status
         subject = "Auction Status Updated"
+        if instance.ended_at < timezone.now():
+            return
+
         if status == AuctionStatus.EXPIRED:
             message = f"Your auction has been expired without any bid.\n you can check it. https://3.17.152.211/auction/detail/{instance.id}"
         elif status == AuctionStatus.RESERVE_NOT_MET:

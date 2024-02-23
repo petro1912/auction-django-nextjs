@@ -15,7 +15,7 @@ from rest_framework import status
 from rest_framework.decorators import parser_classes
 from rest_framework.parsers import MultiPartParser, FormParser
 from .models import AuctionItem, AuctionBid, AuctionStatus
-from .serializers import AuctionItemSerializer, AuctionBidSerializer
+from .serializers import AuctionItemSerializer, AuctionBidSerializer, AuctionBidCreateSerializer
 # Create your views here.
 
     
@@ -31,13 +31,13 @@ def auction_list(request):
 @renderer_classes((JSONRenderer,))
 def auction_detail(request, id):
     item = AuctionItem.objects.get(pk = id)
-    now = timezone.now()
-    if item.started_at < now and item.status == AuctionStatus.NEW:
-        if item.ended_at > now:
-            item.status = AuctionStatus.LIVE
-        else:
-            item.status = AuctionStatus.EXPIRED
-        item.save()
+    # now = timezone.now()
+    # if item.started_at < now and item.status == AuctionStatus.NEW:
+    #     if item.ended_at > now:
+    #         item.status = AuctionStatus.LIVE
+    #     else:
+    #         item.status = AuctionStatus.EXPIRED
+    #     item.save()
     serializer = AuctionItemSerializer(item, many=False)
 
     return Response({"status": "success", "data": serializer.data})
@@ -142,7 +142,7 @@ def auction_create_bid_view(request, id):
             "message": "The auction has not started or completed."
         })
 
-    serializer = AuctionBidSerializer(data=data)
+    serializer = AuctionBidCreateSerializer(data=data)
     high_bid = None
     try:
         high_bid = AuctionBid.objects.filter(item_id=id, is_highest=True)[:1].get()
